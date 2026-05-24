@@ -107,13 +107,14 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 .tbl-ulohy{width:100%;border-collapse:collapse;font-size:13px}
 .tbl-ulohy th{font-size:12px;font-weight:500;color:var(--text3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);background:var(--bg3)}
 .tbl-ulohy td{padding:1px 6px;border-bottom:1px solid var(--border3);vertical-align:top}
+.tbl-ulohy td.td-mid{vertical-align:middle;text-align:center}
 .tbl-ulohy tr.row-priorita td{background:#fce7f3}
 [data-theme="dark"] .tbl-ulohy tr.row-priorita td{background:#4a1f3a}
 .tbl-ulohy input[type="text"],.tbl-ulohy input[type="date"],.tbl-ulohy select,.tbl-ulohy textarea{width:100%;padding:4px 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text);font-size:13px;font-family:inherit}
 .tbl-ulohy textarea{resize:none;overflow:hidden;min-height:26px;line-height:1.35}
 .tbl-ulohy input[type="text"]:hover,.tbl-ulohy input[type="date"]:hover,.tbl-ulohy select:hover,.tbl-ulohy textarea:hover{border-color:var(--border)}
 .tbl-ulohy input[type="text"]:focus,.tbl-ulohy input[type="date"]:focus,.tbl-ulohy select:focus,.tbl-ulohy textarea:focus{outline:none;border-color:#999;background:var(--input)}
-.tbl-ulohy .btn-del{height:26px;width:26px;padding:0;font-size:15px;line-height:1;border:1px solid var(--border);background:var(--btn-bg);border-radius:6px;cursor:pointer;color:#dc2626}
+.tbl-ulohy .btn-del{height:22px;width:22px;padding:0;font-size:12px;line-height:1;border:1px solid var(--border);background:var(--btn-bg);border-radius:5px;cursor:pointer;color:#dc2626}
 .tbl-ulohy .btn-del:hover{background:#fee2e2;border-color:#dc2626}
 [data-theme="dark"] .tbl-ulohy .btn-del:hover{background:#4a1515}
 .notify-line{display:block;margin:4px 0;padding-left:8px}
@@ -140,7 +141,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 <div class="login-wrap" id="login-screen">
   <div class="login-card">
     <div style="text-align:center;margin-bottom:1.5rem">
-      <img src="https://emiliasokolova1-art.github.io/evidencia_objednavok/logo_velke_modre_svetle.png" alt="Brenner AMS" style="max-width:240px;height:auto">
+      <img src="logo_velke_modre_svetle.png" alt="Brenner AMS" style="max-width:240px;height:auto">
       <div style="font-size:13px;color:var(--text2);margin-top:.5rem">Evidencia objednávok</div>
     </div>
     <div class="field" style="margin-bottom:10px"><label>Email</label><input type="email" id="login-email" placeholder="vas@email.sk"></div>
@@ -154,7 +155,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 <div class="app">
   <div class="topbar">
     <div>
-      <img src="https://emiliasokolova1-art.github.io/evidencia_objednavok/logo_velke_modre_svetle.png" alt="Brenner AMS" style="height:56px;width:auto">
+      <img src="logo_velke_modre_svetle.png" alt="Brenner AMS" style="height:56px;width:auto">
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-sm" id="btn-nova" style="display:none" onclick="otvorModal()">+ Nová objednávka</button>
@@ -1472,8 +1473,8 @@ function ulohyRowHtml(r,osoba,isNew){
     +'<td><textarea rows="1" oninput="autosizeTa(this)" onblur="ulozPoleUlohy(this,\'ulohaText\')">'+esc(r.ulohaText||'')+'</textarea></td>'
     +'<td><input type="date" value="'+esc(term)+'" onchange="ulozPoleUlohy(this,\'terminZadania\')"></td>'
     +'<td><textarea rows="1" oninput="autosizeTa(this)" onblur="ulozPoleUlohy(this,\'poznamka\')">'+esc(r.poznamka||'')+'</textarea></td>'
-    +'<td style="text-align:center"><input type="checkbox"'+(priorita?' checked':'')+' onchange="ulozPoleUlohy(this,\'priorita\')"></td>'
-    +'<td style="text-align:center">'+delBtn+'</td>'
+    +'<td class="td-mid"><input type="checkbox"'+(priorita?' checked':'')+' onchange="ulozPoleUlohy(this,\'priorita\')"></td>'
+    +'<td class="td-mid">'+delBtn+'</td>'
     +'</tr>';
 }
 function autosizeTa(el){ el.style.height='auto'; el.style.height=Math.max(el.scrollHeight,26)+'px'; }

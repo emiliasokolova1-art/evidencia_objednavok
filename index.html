@@ -16,6 +16,18 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:1.5rem;flex-wrap:wrap}
 .tab{padding:8px 16px;cursor:pointer;border-radius:8px 8px 0 0;font-size:13px;color:var(--text2);border:1px solid transparent;border-bottom:none;background:transparent;white-space:nowrap}
 .tab.active{color:var(--text);background:var(--card);border-color:var(--border);font-weight:500}
+.tab.tab-lenka{background:#fef3c7;color:#78350f}
+.tab.tab-katka{background:#f0fdf4;color:#365314}
+.tab.tab-emilia{background:#fdf2f8;color:#be185d}
+.tab.tab-lenka.active{background:#fde68a;color:#78350f;border-color:#f59e0b}
+.tab.tab-katka.active{background:#ecfccb;color:#365314;border-color:#a3e635}
+.tab.tab-emilia.active{background:#fce7f3;color:#be185d;border-color:#f9a8d4}
+[data-theme="dark"] .tab.tab-lenka{background:#3a2f0f;color:#fcd34d}
+[data-theme="dark"] .tab.tab-katka{background:#1a2e10;color:#bef264}
+[data-theme="dark"] .tab.tab-emilia{background:#3a1228;color:#f9a8d4}
+[data-theme="dark"] .tab.tab-lenka.active{background:#5a4a15;color:#fde68a;border-color:#f59e0b}
+[data-theme="dark"] .tab.tab-katka.active{background:#26401a;color:#ecfccb;border-color:#a3e635}
+[data-theme="dark"] .tab.tab-emilia.active{background:#5a1d3d;color:#fce7f3;border-color:#f9a8d4}
 .section{display:none}.section.active{display:block}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--shadow)}
 .field{display:flex;flex-direction:column;gap:4px}
@@ -93,21 +105,18 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 .row-selected td{background:#dbeafe!important}
 [data-theme="dark"] .row-selected td{background:#1e3a5f!important}
 .tbl-ulohy{width:100%;border-collapse:collapse;font-size:13px}
-.tbl-ulohy th{font-size:12px;font-weight:500;color:var(--text3);text-align:left;padding:8px 8px;border-bottom:1px solid var(--border);background:var(--bg3)}
-.tbl-ulohy td{padding:4px 6px;border-bottom:1px solid var(--border3);vertical-align:middle}
+.tbl-ulohy th{font-size:12px;font-weight:500;color:var(--text3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);background:var(--bg3)}
+.tbl-ulohy td{padding:1px 6px;border-bottom:1px solid var(--border3);vertical-align:top}
+.tbl-ulohy td.td-mid{vertical-align:middle;text-align:center}
 .tbl-ulohy tr.row-priorita td{background:#fce7f3}
 [data-theme="dark"] .tbl-ulohy tr.row-priorita td{background:#4a1f3a}
-.tbl-ulohy tr.row-skryte td{background:#dcfce7}
-[data-theme="dark"] .tbl-ulohy tr.row-skryte td{background:#1a3a2e}
-.tbl-ulohy tr.row-priorita.row-skryte td{background:linear-gradient(135deg,#fce7f3 50%,#dcfce7 50%)}
-[data-theme="dark"] .tbl-ulohy tr.row-priorita.row-skryte td{background:linear-gradient(135deg,#4a1f3a 50%,#1a3a2e 50%)}
-.tbl-ulohy input[type="text"],.tbl-ulohy input[type="date"],.tbl-ulohy select{width:100%;padding:5px 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text);font-size:13px;font-family:inherit}
-.tbl-ulohy input[type="text"]:hover,.tbl-ulohy input[type="date"]:hover,.tbl-ulohy select:hover{border-color:var(--border)}
-.tbl-ulohy input[type="text"]:focus,.tbl-ulohy input[type="date"]:focus,.tbl-ulohy select:focus{outline:none;border-color:#999;background:var(--input)}
-.tbl-ulohy .btn-row{height:28px;width:32px;padding:0;font-size:14px;line-height:1;border:1px solid var(--border);background:var(--btn-bg);border-radius:6px;cursor:pointer;color:var(--text)}
-.tbl-ulohy .btn-row:hover{background:var(--btn-hover)}
-.skryte-toggle{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--btn-bg);cursor:pointer;font-size:12px;color:var(--text2)}
-.skryte-toggle:hover{background:var(--btn-hover)}
+.tbl-ulohy input[type="text"],.tbl-ulohy input[type="date"],.tbl-ulohy select,.tbl-ulohy textarea{width:100%;padding:4px 7px;border:1px solid transparent;border-radius:6px;background:transparent;color:var(--text);font-size:13px;font-family:inherit}
+.tbl-ulohy textarea{resize:none;overflow:hidden;min-height:26px;line-height:1.35}
+.tbl-ulohy input[type="text"]:hover,.tbl-ulohy input[type="date"]:hover,.tbl-ulohy select:hover,.tbl-ulohy textarea:hover{border-color:var(--border)}
+.tbl-ulohy input[type="text"]:focus,.tbl-ulohy input[type="date"]:focus,.tbl-ulohy select:focus,.tbl-ulohy textarea:focus{outline:none;border-color:#999;background:var(--input)}
+.tbl-ulohy .btn-del{height:22px;width:22px;padding:0;font-size:12px;line-height:1;border:1px solid var(--border);background:var(--btn-bg);border-radius:5px;cursor:pointer;color:#dc2626}
+.tbl-ulohy .btn-del:hover{background:#fee2e2;border-color:#dc2626}
+[data-theme="dark"] .tbl-ulohy .btn-del:hover{background:#4a1515}
 .notify-line{display:block;margin:4px 0;padding-left:8px}
 .tbl tbody tr[data-id]{user-select:none}
 .ftab{padding:5px 12px;border-radius:8px 8px 0 0;cursor:pointer;font-size:12px;border:1px solid var(--border);border-bottom:none;background:var(--bg3);color:var(--text2);display:inline-flex;align-items:center;gap:6px}
@@ -132,7 +141,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 <div class="login-wrap" id="login-screen">
   <div class="login-card">
     <div style="text-align:center;margin-bottom:1.5rem">
-      <img src="https://emiliasokolova1-art.github.io/evidencia_objednavok/logo_velke_modre_svetle.png" alt="Brenner AMS" style="max-width:240px;height:auto">
+      <img src="logo_velke_modre_svetle.png" alt="Brenner AMS" style="max-width:240px;height:auto">
       <div style="font-size:13px;color:var(--text2);margin-top:.5rem">Evidencia objednávok</div>
     </div>
     <div class="field" style="margin-bottom:10px"><label>Email</label><input type="email" id="login-email" placeholder="vas@email.sk"></div>
@@ -146,7 +155,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 <div class="app">
   <div class="topbar">
     <div>
-      <img src="https://emiliasokolova1-art.github.io/evidencia_objednavok/logo_velke_modre_svetle.png" alt="Brenner AMS" style="height:56px;width:auto">
+      <img src="logo_velke_modre_svetle.png" alt="Brenner AMS" style="height:56px;width:auto">
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-sm" id="btn-nova" style="display:none" onclick="otvorModal()">+ Nová objednávka</button>
@@ -160,9 +169,9 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
       <div class="tab" id="tab-historia" onclick="showSec('historia')" style="border-bottom:none">🗂 História</div>
       <div class="tab" id="tab-kalendar" onclick="showSec('kalendar')" style="border-bottom:none">🗓 Kalendár</div>
       <div class="tab" id="tab-moje" onclick="showSec('moje')" style="border-bottom:none">👤 Moje merania</div>
-      <div class="tab" id="tab-lenka" onclick="showSec('lenka')" style="border-bottom:none">📝 Lenka</div>
-      <div class="tab" id="tab-katka" onclick="showSec('katka')" style="border-bottom:none">📝 Katka</div>
-      <div class="tab" id="tab-emilia" onclick="showSec('emilia')" style="border-bottom:none">📝 Emilia</div>
+      <div class="tab tab-lenka" id="tab-lenka" onclick="showSec('lenka')" style="border-bottom:none">📝 Lenka</div>
+      <div class="tab tab-katka" id="tab-katka" onclick="showSec('katka')" style="border-bottom:none">📝 Katka</div>
+      <div class="tab tab-emilia" id="tab-emilia" onclick="showSec('emilia')" style="border-bottom:none">📝 Emilia</div>
     </div>
     <div style="font-size:12px;color:var(--text3);padding-bottom:4px" id="user-label"></div>
   </div>
@@ -307,7 +316,6 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
   <div id="sec-lenka" class="section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
       <h2 style="font-size:18px;font-weight:500">📝 Pracovné úlohy — Lenka</h2>
-      <button class="skryte-toggle" id="toggle-skryte-lenka" onclick="toggleSkryte('Lenka')">🙈 Zobraziť skryté (0)</button>
     </div>
     <div class="card" style="padding:0">
       <div class="tbl-wrap">
@@ -318,7 +326,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th style="width:160px">Termín zadania</th>
             <th>Poznámka</th>
             <th style="width:80px;text-align:center">Priorita</th>
-            <th style="width:70px;text-align:center">Skryť</th>
+            <th style="width:44px"></th>
           </tr></thead>
           <tbody id="ulohy-body-Lenka"></tbody>
         </table>
@@ -329,7 +337,6 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
   <div id="sec-katka" class="section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
       <h2 style="font-size:18px;font-weight:500">📝 Pracovné úlohy — Katka</h2>
-      <button class="skryte-toggle" id="toggle-skryte-katka" onclick="toggleSkryte('Katka')">🙈 Zobraziť skryté (0)</button>
     </div>
     <div class="card" style="padding:0">
       <div class="tbl-wrap">
@@ -340,7 +347,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th style="width:160px">Termín zadania</th>
             <th>Poznámka</th>
             <th style="width:80px;text-align:center">Priorita</th>
-            <th style="width:70px;text-align:center">Skryť</th>
+            <th style="width:44px"></th>
           </tr></thead>
           <tbody id="ulohy-body-Katka"></tbody>
         </table>
@@ -351,7 +358,6 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
   <div id="sec-emilia" class="section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
       <h2 style="font-size:18px;font-weight:500">📝 Pracovné úlohy — Emilia</h2>
-      <button class="skryte-toggle" id="toggle-skryte-emilia" onclick="toggleSkryte('Emilia')">🙈 Zobraziť skryté (0)</button>
     </div>
     <div class="card" style="padding:0">
       <div class="tbl-wrap">
@@ -362,7 +368,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th style="width:160px">Termín zadania</th>
             <th>Poznámka</th>
             <th style="width:80px;text-align:center">Priorita</th>
-            <th style="width:70px;text-align:center">Skryť</th>
+            <th style="width:44px"></th>
           </tr></thead>
           <tbody id="ulohy-body-Emilia"></tbody>
         </table>
@@ -510,7 +516,6 @@ const STAVY = ['objednané','odmerané','domerať','čaká sa na podklady','vypr
 let currentUser=null, currentOsoba='', isSef=false;
 let objednavky=[], historia=[];
 let pracovneUlohy=[];
-let zobrazitSkryte={Lenka:false,Katka:false,Emilia:false};
 let editId=null, stavEditId=null, poznEditId=null;
 let kalRok=new Date().getFullYear(), kalMesiac=new Date().getMonth();
 let sortKol='poradCislo', sortAsc=true;
@@ -1455,47 +1460,35 @@ function ulohyJeRiadokPrazdny(r){
 }
 function ulohyRowHtml(r,osoba,isNew){
   const priorita=r.priorita||false;
-  const skryte=(r.skryte||false)&&!isNew;
   const zarad=r.zaradenie||'';
   const term=r.terminZadania||'';
   const prioClass=priorita?'row-priorita':'';
-  const skryteClass=skryte?'row-skryte':'';
-  const trClass=(prioClass+' '+skryteClass).trim();
   let zarOpts='<option value=""'+(!zarad?' selected':'')+'></option>';
   FAKTORY.forEach(f=>{ zarOpts+='<option'+(zarad===f?' selected':'')+'>'+esc(f)+'</option>'; });
   zarOpts+='<option'+(zarad==='Iné'?' selected':'')+'>Iné</option>';
   const rowId=isNew?'new':r.id;
-  return '<tr data-id="'+esc(rowId)+'" data-osoba="'+esc(osoba)+'"'+(trClass?' class="'+trClass+'"':'')+'>'
+  const delBtn=isNew?'' : '<button class="btn-del" onclick="vymazUlohu(this)" title="Odstrániť riadok">✕</button>';
+  return '<tr data-id="'+esc(rowId)+'" data-osoba="'+esc(osoba)+'"'+(prioClass?' class="'+prioClass+'"':'')+'>'
     +'<td><select onchange="ulozPoleUlohy(this,\'zaradenie\')">'+zarOpts+'</select></td>'
-    +'<td><input type="text" value="'+esc(r.ulohaText||'')+'" onblur="ulozPoleUlohy(this,\'ulohaText\')"></td>'
+    +'<td><textarea rows="1" oninput="autosizeTa(this)" onblur="ulozPoleUlohy(this,\'ulohaText\')">'+esc(r.ulohaText||'')+'</textarea></td>'
     +'<td><input type="date" value="'+esc(term)+'" onchange="ulozPoleUlohy(this,\'terminZadania\')"></td>'
-    +'<td><input type="text" value="'+esc(r.poznamka||'')+'" onblur="ulozPoleUlohy(this,\'poznamka\')"></td>'
-    +'<td style="text-align:center"><input type="checkbox"'+(priorita?' checked':'')+' onchange="ulozPoleUlohy(this,\'priorita\')"></td>'
-    +'<td style="text-align:center"><input type="checkbox"'+(skryte?' checked':'')+(isNew?' disabled':'')+' onchange="ulozPoleUlohy(this,\'skryte\')"></td>'
+    +'<td><textarea rows="1" oninput="autosizeTa(this)" onblur="ulozPoleUlohy(this,\'poznamka\')">'+esc(r.poznamka||'')+'</textarea></td>'
+    +'<td class="td-mid"><input type="checkbox"'+(priorita?' checked':'')+' onchange="ulozPoleUlohy(this,\'priorita\')"></td>'
+    +'<td class="td-mid">'+delBtn+'</td>'
     +'</tr>';
 }
+function autosizeTa(el){ el.style.height='auto'; el.style.height=Math.max(el.scrollHeight,26)+'px'; }
 function renderUlohy(osoba){
   const tbody=gi('ulohy-body-'+osoba); if(!tbody) return;
   // Zoradenie podľa created (poradie zápisu), nemenné
   const rows=pracovneUlohy.filter(r=>r.osoba===osoba).sort((a,b)=>(a.created||0)-(b.created||0));
-  const showHidden=zobrazitSkryte[osoba];
   let html='';
-  rows.forEach(r=>{
-    // Ak skryté nie sú zobrazené, preskoč skryté riadky
-    if(r.skryte && !showHidden) return;
-    html+=ulohyRowHtml(r,osoba,false);
-  });
+  rows.forEach(r=>{ html+=ulohyRowHtml(r,osoba,false); });
   // Vždy jeden prázdny trailing riadok
   html+=ulohyRowHtml({},osoba,true);
   tbody.innerHTML=html;
-  // Aktualizuj tlačidlo prepínača skrytých
-  const pocetSkrytych=rows.filter(r=>r.skryte).length;
-  const btn=gi('toggle-skryte-'+osoba.toLowerCase());
-  if(btn){
-    btn.textContent=showHidden
-      ? '🙈 Skryť skryté ('+pocetSkrytych+')'
-      : '🙈 Zobraziť skryté ('+pocetSkrytych+')';
-  }
+  // Prispôsob výšku textových polí obsahu
+  tbody.querySelectorAll('textarea').forEach(autosizeTa);
 }
 window.ulozPoleUlohy=async function(el,pole){
   const tr=el.closest('tr'); if(!tr) return;
@@ -1509,14 +1502,14 @@ window.ulozPoleUlohy=async function(el,pole){
     try{
       const data={
         osoba:osoba, zaradenie:'', ulohaText:'', terminZadania:null,
-        poznamka:'', priorita:false, skryte:false, created:Date.now()
+        poznamka:'', priorita:false, created:Date.now()
       };
       data[pole]=hodnota;
       const ref=await addDoc(collection(db,'pracovne_ulohy'),data);
-      // Aktualizuj DOM bez stratenia fokusu — zmeň data-id riadku a povoľ skryť checkbox
+      // Aktualizuj DOM bez stratenia fokusu — zmeň data-id riadku a doplň X tlačidlo
       tr.dataset.id=ref.id;
-      const skrytBox=tr.querySelector('td:last-child input[type="checkbox"]');
-      if(skrytBox) skrytBox.disabled=false;
+      const delCell=tr.querySelector('td:last-child');
+      if(delCell) delCell.innerHTML='<button class="btn-del" onclick="vymazUlohu(this)" title="Odstrániť riadok">✕</button>';
       // Doplň nový prázdny riadok na koniec tela tabuľky
       const tbody=tr.parentElement;
       tbody.insertAdjacentHTML('beforeend', ulohyRowHtml({},osoba,true));
@@ -1535,11 +1528,6 @@ window.ulozPoleUlohy=async function(el,pole){
     const row=pracovneUlohy.find(r=>r.id===rowId);
     if(row) row[pole]=hodnota;
     if(pole==='priorita') tr.classList.toggle('row-priorita',hodnota);
-    // Zmena skryte — re-render kvôli viditeľnosti a podfarbeniu
-    if(pole==='skryte'){
-      renderUlohy(osoba);
-      return;
-    }
     // Skontroluj, či je riadok teraz úplne prázdny — ak áno, vymaž ho
     if(row && ulohyJeRiadokPrazdny(row)){
       await deleteDoc(doc(db,'pracovne_ulohy',rowId));
@@ -1549,9 +1537,17 @@ window.ulozPoleUlohy=async function(el,pole){
     }
   } catch(e){ alert('Chyba uloženia úlohy: '+e.message); }
 };
-window.toggleSkryte=function(osoba){
-  zobrazitSkryte[osoba]=!zobrazitSkryte[osoba];
-  renderUlohy(osoba);
+window.vymazUlohu=async function(btn){
+  const tr=btn.closest('tr'); if(!tr) return;
+  const rowId=tr.dataset.id; const osoba=tr.dataset.osoba;
+  if(rowId==='new') return;
+  if(!confirm('Naozaj odstrániť tento riadok?')) return;
+  try{
+    await deleteDoc(doc(db,'pracovne_ulohy',rowId));
+    const idx=pracovneUlohy.findIndex(r=>r.id===rowId);
+    if(idx>=0) pracovneUlohy.splice(idx,1);
+    tr.remove();
+  } catch(e){ alert('Chyba pri mazaní: '+e.message); }
 };
 
 function gi(id){ return document.getElementById(id); }

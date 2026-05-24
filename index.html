@@ -489,7 +489,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc, deleteDoc, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, setDoc, deleteDoc, query, orderBy, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const fbApp = initializeApp({
   apiKey:"AIzaSyBF-T03wUuFidKhrECdY7eurYx1H3fYd_w",
@@ -697,7 +697,7 @@ onAuthStateChanged(auth,user=>{
     gi('login-screen').style.display='none'; gi('app-screen').style.display='block';
     gi('user-label').textContent=user.email+' ('+currentOsoba+')';
     gi('btn-nova').style.display=isSef?'':'none';
-    nacitaj();
+    nacitajStart();
   } else {
     currentUser=null;
     gi('login-screen').style.display='flex'; gi('app-screen').style.display='none';
@@ -706,7 +706,17 @@ onAuthStateChanged(auth,user=>{
 });
 
 // ── NAČÍTANIE ─────────────────────────────────────────────
-async function nacitaj(){
+let historiaLoaded=false;
+// Spoločné prekreslenie všetkých pohľadov
+function renderVsetko(){
+  naplnRoky();
+  renderNotify(); renderEditNotify();
+  renderTabulka(); renderHistoria(); renderKalendar(); renderMoje();
+  renderUlohy('Lenka'); renderUlohy('Katka'); renderUlohy('Emilia');
+  naplnMesiaceHistoria();
+}
+// Plné načítanie pri štarte — prečíta všetko raz, rozdelí, doplní chýbajúce 'archiv' pole
+async function nacitajStart(){
   try{
     const snap=await getDocs(query(collection(db,'objednavky'),orderBy('created','asc')));
     const vsetky=[];
@@ -714,16 +724,46 @@ async function nacitaj(){
     vsetky.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
     vsetky.forEach((o,i)=>{ if(!o.poradCislo) o.poradCislo=i+1; });
     objednavky=[]; historia=[];
-    vsetky.forEach(o=>{ if(o.archiv) historia.push(o); else objednavky.push(o); });
-    // Načítaj pracovné úlohy
+    for(const o of vsetky){
+      // Jednorazovo doplň chýbajúce 'archiv' pole, aby boli where-dotazy spoľahlivé
+      if(o.archiv===undefined){ o.archiv=false; try{ await updateDoc(doc(db,'objednavky',o.id),{archiv:false}); }catch(e){} }
+      if(o.archiv) historia.push(o); else objednavky.push(o);
+    }
+    historiaLoaded=true;
+    // Pracovné úlohy — načítaj raz, ďalej sa udržiavajú lokálne
     const snapU=await getDocs(query(collection(db,'pracovne_ulohy'),orderBy('created','asc')));
     pracovneUlohy=[];
     snapU.forEach(d=>pracovneUlohy.push({id:d.id,...d.data()}));
-    naplnRoky();
-    renderNotify(); renderEditNotify();
-    renderTabulka(); renderHistoria(); renderKalendar(); renderMoje();
-    renderUlohy('Lenka'); renderUlohy('Katka'); renderUlohy('Emilia');
-    naplnMesiaceHistoria();
+    renderVsetko();
+  } catch(e){ console.error(e); }
+}
+// Časté obnovenie po bežnej akcii — číta LEN aktívne objednávky (archiv==false), archív ostáva v pamäti
+async function nacitaj(){
+  try{
+    const snap=await getDocs(query(collection(db,'objednavky'),where('archiv','==',false)));
+    const akt=[];
+    snap.forEach(d=>akt.push({id:d.id,...d.data()}));
+    akt.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
+    akt.forEach((o,i)=>{ if(!o.poradCislo) o.poradCislo=i+1; });
+    objednavky=akt;
+    renderVsetko();
+  } catch(e){ console.error(e); }
+}
+// Plné obnovenie aktívnych + archívu — po operáciách meniacich archív (presun, obnova, import, hromadné mazanie, reorder)
+async function nacitajPlne(){
+  try{
+    const [snapA,snapH]=await Promise.all([
+      getDocs(query(collection(db,'objednavky'),where('archiv','==',false))),
+      getDocs(query(collection(db,'objednavky'),where('archiv','==',true)))
+    ]);
+    const akt=[],arch=[];
+    snapA.forEach(d=>akt.push({id:d.id,...d.data()}));
+    snapH.forEach(d=>arch.push({id:d.id,...d.data()}));
+    akt.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
+    arch.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
+    akt.forEach((o,i)=>{ if(!o.poradCislo) o.poradCislo=i+1; });
+    objednavky=akt; historia=arch; historiaLoaded=true;
+    renderVsetko();
   } catch(e){ console.error(e); }
 }
 function naplnMesiaceHistoria(){
@@ -943,7 +983,7 @@ window.renderHistoria=function(){
 window.vychovatZHistorie=async function(id){
   if(!confirm('Presunúť späť do aktívnych?')) return;
   await updateDoc(doc(db,'objednavky',id),{archiv:false,stav:'objednané',updated:Date.now()});
-  await nacitaj();
+  await nacitajPlne();
 };
 
 // ── MOJE ──────────────────────────────────────────────────
@@ -1146,7 +1186,9 @@ window.ulozitObjednavku=async function(){
         }));
       }
     }
-    zatvorModal(); await nacitaj();
+    zatvorModal();
+    // Ak sa upravovala archivovaná objednávka, obnov aj archív
+    if(editId && historia.some(h=>h.id===editId)) await nacitajPlne(); else await nacitaj();
   } catch(e){ alert('Chyba uloženia: '+e.message); }
   btn.disabled=false; btn.textContent='Uložiť';
 };
@@ -1170,13 +1212,13 @@ window.kopirovatObjednavku=async function(id){
 window.vymazObjednavku=async function(id){
   if(!confirm('Naozaj vymazať?')) return;
   await deleteDoc(doc(db,'objednavky',id));
-  await prepocitajPoradie(); await nacitaj();
+  await prepocitajPoradie(); await nacitajPlne();
 };
 
 window.presunutDoHistorie=async function(id){
   if(!confirm('Presunúť do histórie?')) return;
   await updateDoc(doc(db,'objednavky',id),{archiv:true,updated:Date.now()});
-  zatvorDetail(); await nacitaj();
+  zatvorDetail(); await nacitajPlne();
 };
 
 async function prepocitajPoradie(){
@@ -1262,7 +1304,7 @@ window.hromadneVymazat=async function(){
   for(const id of [...selectedIds]) await deleteDoc(doc(db,'objednavky',id));
   selectedIds.clear(); lastSelectedId=null;
   gi('btn-hromadne-vymaz').style.display='none';
-  await prepocitajPoradie(); await nacitaj();
+  await prepocitajPoradie(); await nacitajPlne();
 };
 
 // Historia selection
@@ -1299,7 +1341,7 @@ window.hromadneVymazatHist=async function(){
   for(const id of [...selectedIdsHist]) await deleteDoc(doc(db,'objednavky',id));
   selectedIdsHist.clear(); lastSelectedIdHist=null;
   gi('btn-hromadne-vymaz-hist').style.display='none';
-  await prepocitajPoradie(); await nacitaj();
+  await prepocitajPoradie(); await nacitajPlne();
 };
 
 // ── EXPORT / IMPORT ───────────────────────────────────────
@@ -1375,7 +1417,7 @@ window.importCSV=async function(event,tab){
   }
   event.target.value='';
   alert('Importovaných: '+count+' záznamov');
-  await nacitaj();
+  await nacitajPlne();
 };
 
 // ── HELPERS ───────────────────────────────────────────────

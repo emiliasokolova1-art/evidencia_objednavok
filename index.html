@@ -159,6 +159,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <button class="btn btn-sm" id="btn-nova" style="display:none" onclick="otvorModal()">+ Nová objednávka</button>
+      <button class="btn btn-sm" onclick="stiahnutZalohu()" title="Stiahne objednávky aj históriu ako CSV (bez filtrov)">💾 Stiahnuť zálohu</button>
       <button class="btn btn-sm" onclick="toggleDark()">🌙</button>
       <button class="btn btn-sm btn-danger" onclick="odhlasit()">Odhlásiť</button>
     </div>
@@ -768,23 +769,15 @@ async function nacitajPlne(){
 }
 function naplnMesiaceHistoria(){
   const el=gi('hf-mesiac'); if(!el) return;
-  const rok=gv('hf-rok');
-  const data=rok?historia.filter(o=>o.termin&&o.termin.startsWith(rok)):historia;
-  const mesiace=[...new Set(data.filter(o=>o.termin).map(o=>o.termin.slice(5,7)))].sort();
   const nazvy=['','január','február','marec','apríl','máj','jún','júl','august','september','október','november','december'];
   const cur=el.value;
   el.innerHTML='<option value="">Všetky mesiace</option>';
-  // get unique rok-mesiac combos for display
-  const rokMesiac=[...new Set(data.filter(o=>o.termin).map(o=>o.termin.slice(0,7)))].sort().reverse();
-  rokMesiac.forEach(rm=>{
-    const [r,m]=rm.split('-');
+  for(let m=1;m<=12;m++){
+    const mm=String(m).padStart(2,'0');
     const op=document.createElement('option');
-    op.value=m; op.textContent=nazvy[parseInt(m)]+' '+r;
-    // if same rok is selected, use just month value; otherwise use rok-mes
-    op.dataset.rok=r;
+    op.value=mm; op.textContent=nazvy[m];
     el.appendChild(op);
-  });
-  // Try to restore previous value
+  }
   if(cur) el.value=cur;
 }
 
@@ -799,13 +792,9 @@ function autoSelectNewestHistoria(){
   // Set rok filter
   const rokEl=gi('hf-rok'); if(rokEl) rokEl.value=rok;
   naplnMesiaceHistoria();
-  // Find and select the right option
+  // Predvyber najnovší mesiac (čistý mesiac, nezávislý od roka)
   const mesEl=gi('hf-mesiac');
-  if(mesEl){
-    for(const opt of mesEl.options){
-      if(opt.value===mes && opt.dataset.rok===rok){ mesEl.value=mes; break; }
-    }
-  }
+  if(mesEl) mesEl.value=mes;
 }
 
 function naplnRoky(){
@@ -1345,26 +1334,38 @@ window.hromadneVymazatHist=async function(){
 };
 
 // ── EXPORT / IMPORT ───────────────────────────────────────
-window.exportCSV=function(tab){
-  const data=tab==='historia'?historia:objednavky;
-  const fOs=tab==='historia'?gv('hf-osoba'):gv('f-osoba');
-  const fRok=tab==='historia'?gv('hf-rok'):gv('f-rok');
-  const fS=tab==='historia'?gv('hf-search').toLowerCase():gv('f-search').toLowerCase();
-  let d=[...data];
-  if(fOs) d=d.filter(o=>o.osoba===fOs);
-  if(fRok) d=d.filter(o=>o.termin&&o.termin.startsWith(fRok));
-  if(fS) d=d.filter(o=>[o.evCislo,o.objednavatel,o.kontakt,o.miesto,o.poznamka].join(' ').toLowerCase().includes(fS));
+function buildCSV(arr){
   const hdr=['P.c.','GroupId','Ev.cislo','Objednavatel','Kontakt','Mobil','Email','Zodpovedny','Faktor','Termin','TerminDo','Cas','Miesto','Stav','Poznamka','Rozsah'];
   function q(v){ return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }
-  const rows=d.map(function(o){
+  const rows=arr.map(function(o){
     return [o.poradCislo||'',o.groupId||'',o.evCislo,o.objednavatel,o.kontakt,o.mobil,o.mail,o.osoba,o.faktor,o.termin?formatDatum(o.termin):'',o.terminDo?formatDatum(o.terminDo):'',o.cas,o.miesto,o.stav,o.poznamka,o.rozsah||''].map(q).join(';');
   });
-  const csv='\uFEFF'+hdr.map(q).join(';')+'\n'+rows.join('\n');
+  return '\uFEFF'+hdr.map(q).join(';')+'\n'+rows.join('\n');
+}
+function downloadCSV(csv,filename){
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url;
-  a.download=(tab==='historia'?'historia':'objednavky')+'_export.csv';
+  const a=document.createElement('a'); a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+window.exportCSV=function(tab){
+  // Export vždy všetky záznamy, bez ohľadu na zapnuté filtre
+  const data=tab==='historia'?historia:objednavky;
+  downloadCSV(buildCSV([...data]),(tab==='historia'?'historia':'objednavky')+'_export.csv');
+};
+window.stiahnutZalohu=async function(){
+  const dnes=new Date().toISOString().slice(0,10);
+  try{
+    // Záloha číta čerstvé dáta priamo z databázy (úplné, aktuálne, bez filtrov)
+    const snap=await getDocs(collection(db,'objednavky'));
+    const akt=[],arch=[];
+    snap.forEach(d=>{ const o={id:d.id,...d.data()}; if(o.archiv) arch.push(o); else akt.push(o); });
+    akt.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
+    arch.sort((a,b)=>(a.poradCislo||a.created||0)-(b.poradCislo||b.created||0));
+    downloadCSV(buildCSV(akt),'zaloha_objednavky_'+dnes+'.csv');
+    // Malé oneskorenie, aby prehliadač spustil oba súbory na stiahnutie
+    setTimeout(function(){ downloadCSV(buildCSV(arch),'zaloha_historia_'+dnes+'.csv'); },500);
+  } catch(e){ alert('Chyba pri zálohe: '+e.message); }
 };
 window.triggerImportCSV=function(tab){
   if(!confirm('Súbor CSV musí byť v kódovaní UTF-8')) return;

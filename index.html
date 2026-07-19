@@ -481,7 +481,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
     <div class="modal-title">Zmena pre súvisiace objednávky</div>
     <div id="group-info" style="font-size:13px;color:var(--text2);margin-bottom:1rem"></div>
     <div class="modal-actions">
-      <button class="btn" onclick="gi('modal-group').style.display='none';nacitaj()">Nie, len túto</button>
+      <button class="btn" onclick="zamietniGroupZmenu()">Nie, len túto</button>
       <button class="btn btn-primary" onclick="potvrditGroupZmenu()">Áno, zmeniť všetky</button>
     </div>
   </div>
@@ -1148,7 +1148,7 @@ window.ulozitObjednavku=async function(){
           const zN=Object.keys(zmenene).map(f=>({'objednavatel':'Objednávateľ','kontakt':'Kontakt','mobil':'Mobil','mail':'Email','termin':'Termín','cas':'Čas','miesto':'Miesto'}[f]||f)).join(', ');
           gi('group-info').innerHTML='Zmenili ste: <b>'+zN+'</b>.<br>Súvisiace: '+names+'<br><br>Chcete zmeniť aj na nich?';
           btn.disabled=false; btn.textContent='Uložiť';
-          zatvorModal(); gi('modal-group').style.display='flex'; await nacitaj(); return;
+          zatvorModal(); gi('modal-group').style.display='flex'; return;
         }
       }
       await updateDoc(doc(db,'objednavky',editId),data);
@@ -1180,6 +1180,12 @@ window.ulozitObjednavku=async function(){
     if(editId && historia.some(h=>h.id===editId)) await nacitajPlne(); else await nacitaj();
   } catch(e){ alert('Chyba uloženia: '+e.message); }
   btn.disabled=false; btn.textContent='Uložiť';
+};
+
+window.zamietniGroupZmenu=async function(){
+  pendingGroupData=null; pendingGroupIds=[];
+  gi('modal-group').style.display='none';
+  await nacitaj();
 };
 
 window.potvrditGroupZmenu=async function(){

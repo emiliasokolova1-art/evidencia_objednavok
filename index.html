@@ -209,8 +209,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th class="col-fix">Čas</th>
             <th class="col-wrap">Miesto</th>
             <th class="col-fix" onclick="sortBy('stav')">Stav ↕</th>
-            <th class="col-wrap">Poznámka</th>
-            <th class="col-rozsah">Rozsah</th>
+            <th class="col-wrap">Plánovaný rozsah / Poznámka</th>
+            <th class="col-rozsah">Skutočný rozsah</th>
             <th class="col-fix">Videli</th>
             <th></th>
           </tr></thead>
@@ -250,8 +250,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th class="col-fix">Čas</th>
             <th class="col-wrap">Miesto</th>
             <th class="col-fix">Stav</th>
-            <th class="col-wrap">Poznámka</th>
-            <th class="col-rozsah">Rozsah</th>
+            <th class="col-wrap">Plánovaný rozsah / Poznámka</th>
+            <th class="col-rozsah">Skutočný rozsah</th>
             <th class="col-fix">Videli</th>
             <th></th>
           </tr></thead>
@@ -303,8 +303,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
             <th class="col-fix">Čas</th>
             <th class="col-wrap">Miesto</th>
             <th class="col-fix">Stav</th>
-            <th class="col-wrap">Poznámka</th>
-            <th class="col-rozsah">Rozsah</th>
+            <th class="col-wrap">Plánovaný rozsah / Poznámka</th>
+            <th class="col-rozsah">Skutočný rozsah</th>
             <th class="col-fix">Videli</th>
             <th></th>
           </tr></thead>
@@ -441,8 +441,8 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
           <select id="m-faktor"><option value="" disabled selected>Vyber faktor</option><option>H-PP</option><option>H-ŽP</option><option>O</option><option>PA</option><option>Realizácia</option><option>SA</option><option>HS</option><option>V</option><option>TVM</option><option>TM</option></select>
         </div>
       </div>
-      <div class="field" style="margin-bottom:12px"><label>Poznámka</label><textarea id="m-poznamka" placeholder="Popis merania, špeciálne požiadavky..."></textarea></div>
-      <div class="field" style="margin-bottom:12px"><label style="color:#e53e3e">Rozsah merania</label><input id="m-rozsah" placeholder="napr. 4+1 MCE" style="color:#e53e3e"></div>
+      <div class="field" style="margin-bottom:12px"><label>Plánovaný rozsah / Poznámka</label><textarea id="m-poznamka" placeholder="Popis merania, špeciálne požiadavky..."></textarea></div>
+      <div class="field" style="margin-bottom:12px"><label style="color:#e53e3e">Skutočný rozsah</label><input id="m-rozsah" placeholder="napr. 4+1 MCE" style="color:#e53e3e"></div>
     </div>
     <div class="modal-actions">
       <button class="btn" onclick="zatvorModal()">Zrušiť</button>
@@ -638,7 +638,7 @@ function renderFaktoryTabs(){
     ch+='<option value="" disabled'+(f.faktor?'':' selected')+'>Vyber faktor</option>';
     FAKTORY.forEach(fk=>{ ch+='<option'+(f.faktor===fk?' selected':'')+'>'+fk+'</option>'; });
     ch+='</select></div></div>';
-    ch+='<div class="field"><label>Poznámka</label><textarea id="ft-poznamka-'+i+'" oninput="updateFaktorTab('+i+')" placeholder="Popis merania...">'+esc(f.poznamka||'')+'</textarea></div>';
+    ch+='<div class="field"><label>Plánovaný rozsah / Poznámka</label><textarea id="ft-poznamka-'+i+'" oninput="updateFaktorTab('+i+')" placeholder="Popis merania...">'+esc(f.poznamka||'')+'</textarea></div>';
     ch+='</div>';
   });
   content.innerHTML=ch;
@@ -821,7 +821,7 @@ function renderNotify(){
   area.innerHTML=h;
 }
 // Mapa kľúčov polí na slovenské názvy pre notifikácie
-const POLE_NAZVY={evCislo:'Ev. číslo',objednavatel:'Objednávateľ',kontakt:'Kontakt',mobil:'Mobil',mail:'Email',osoba:'Osoba',faktor:'Faktor',termin:'Termín',terminDo:'Termín do',terminText:'Termín',terminDoText:'Termín do',cas:'Čas',miesto:'Miesto',stav:'Stav',poznamka:'Poznámka',rozsah:'Rozsah'};
+const POLE_NAZVY={evCislo:'Ev. číslo',objednavatel:'Objednávateľ',kontakt:'Kontakt',mobil:'Mobil',mail:'Email',osoba:'Osoba',faktor:'Faktor',termin:'Termín',terminDo:'Termín do',terminText:'Termín',terminDoText:'Termín do',cas:'Čas',miesto:'Miesto',stav:'Stav',poznamka:'Plánovaný rozsah / Poznámka',rozsah:'Skutočný rozsah'};
 function renderEditNotify(){
   if(!currentOsoba) return;
   const ed=objednavky.filter(o=>o.lastEditBy&&o.lastEditBy!==currentOsoba&&(isSef||o.osoba===currentOsoba)&&!(o.editNotifPotv||[]).includes(currentOsoba));
@@ -1245,7 +1245,7 @@ window.otvorDetail=function(id){
   const o=[...objednavky,...historia].find(x=>x.id===id); if(!o) return;
   gi('det-title').textContent=(o.evCislo||'Objednávka')+' — '+esc(o.objednavatel||'');
   const terminDisp=o.termin?formatDatum(o.termin):(o.terminText?o.terminText:'<span style="color:var(--text4)">bez dátumu</span>');
-  const pols=[['Ev. číslo',esc(o.evCislo||'—')],['Stav','<span class="chip-stav '+stavClass(o.stav)+'">'+stavLabel(o.stav)+'</span>'],['Objednávateľ',esc(o.objednavatel||'—')],['Kontaktná osoba',esc(o.kontakt||'—')],['Mobil',esc(o.mobil||'—')],['Email',esc(o.mail||'—')],['Zodpovedný','<span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span>'],['Faktor','<span class="chip-faktor">'+esc(o.faktor||'—')+'</span>'],['Termín',terminDisp],['Termín Do',o.terminDo?formatDatum(o.terminDo):(o.terminDoText?esc(o.terminDoText):'—')],['Čas',esc(o.cas||'—')],['Miesto',esc(o.miesto||'—')],['Poznámka',esc(o.poznamka||'—')],['Rozsah','<span style="color:#e53e3e">'+esc(o.rozsah||'—')+'</span>'],['Videli',(o.videli||[]).join(', ')||'—'],['Naposledy upravil',esc(o.lastEditBy||'—')]];
+  const pols=[['Ev. číslo',esc(o.evCislo||'—')],['Stav','<span class="chip-stav '+stavClass(o.stav)+'">'+stavLabel(o.stav)+'</span>'],['Objednávateľ',esc(o.objednavatel||'—')],['Kontaktná osoba',esc(o.kontakt||'—')],['Mobil',esc(o.mobil||'—')],['Email',esc(o.mail||'—')],['Zodpovedný','<span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span>'],['Faktor','<span class="chip-faktor">'+esc(o.faktor||'—')+'</span>'],['Termín',terminDisp],['Termín Do',o.terminDo?formatDatum(o.terminDo):(o.terminDoText?esc(o.terminDoText):'—')],['Čas',esc(o.cas||'—')],['Miesto',esc(o.miesto||'—')],['Plánovaný rozsah / Poznámka',esc(o.poznamka||'—')],['Skutočný rozsah','<span style="color:#e53e3e">'+esc(o.rozsah||'—')+'</span>'],['Videli',(o.videli||[]).join(', ')||'—'],['Naposledy upravil',esc(o.lastEditBy||'—')]];
   let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">';
   pols.forEach(([k,v])=>{ h+='<div style="padding:6px 0;border-bottom:1px solid var(--border3)"><div style="font-size:11px;color:var(--text3)">'+k+'</div><div>'+v+'</div></div>'; });
   h+='</div>';

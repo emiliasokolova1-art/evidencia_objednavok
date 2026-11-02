@@ -62,6 +62,7 @@ body{font-family:system-ui,sans-serif;font-size:14px;background:var(--bg);color:
 .col-fix{white-space:nowrap}
 .col-wrap{white-space:normal;word-break:break-word;min-width:120px}
 .col-termin{white-space:normal;word-break:break-word;min-width:80px;max-width:110px}
+.kontakt-odkaz{color:inherit;text-decoration:underline dotted;text-underline-offset:2px}
 .miesto-adresa{font-size:11px;color:var(--text3)}
 .col-rozsah{white-space:normal;word-break:normal;width:100px;max-width:100px}
 .gc0{--gc:#7ec8f7}.gc1{--gc:#90d9a0}.gc2{--gc:#f9b87a}.gc3{--gc:#f48fb5}.gc4{--gc:#7dd8d0}.gc5{--gc:#f9e07a}
@@ -909,7 +910,7 @@ window.renderTabulka=function(){
     h+='<td class="col-fix"><b>'+esc(o.evCislo||'—')+'</b>'+(nevidena?'<span class="badge-nova"></span>':'')+'</td>';
     h+='<td class="col-wrap">'+esc(o.objednavatel||'—')+'</td>';
     h+='<td class="col-wrap">'+esc(o.kontakt||'—')+'</td>';
-    h+='<td class="col-fix">'+esc(o.mobil||'—')+'</td>';
+    h+='<td class="col-fix">'+telHtml(o.mobil)+'</td>';
     h+='<td class="col-fix"><span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span></td>';
     h+='<td class="col-fix"><span class="chip-faktor">'+esc(o.faktor||'—')+'</span></td>';
     h+='<td class="col-termin">'+(function(){
@@ -960,7 +961,7 @@ window.renderHistoria=function(){
     h+='<td class="col-fix"><b>'+esc(o.evCislo||'—')+'</b></td>';
     h+='<td class="col-wrap">'+esc(o.objednavatel||'—')+'</td>';
     h+='<td class="col-wrap">'+esc(o.kontakt||'—')+'</td>';
-    h+='<td class="col-fix">'+esc(o.mobil||'—')+'</td>';
+    h+='<td class="col-fix">'+telHtml(o.mobil)+'</td>';
     h+='<td class="col-fix"><span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span></td>';
     h+='<td class="col-fix"><span class="chip-faktor">'+esc(o.faktor||'—')+'</span></td>';
     h+='<td class="col-termin">'+(o.termin?formatDatum(o.termin):(o.terminText?'<span style="color:var(--text3);font-style:italic">'+esc(o.terminText)+'</span>':'—'))+'</td>';
@@ -1000,7 +1001,7 @@ window.renderMoje=function(){
     h+='<td class="col-fix"><b>'+esc(o.evCislo||'—')+'</b></td>';
     h+='<td class="col-wrap">'+esc(o.objednavatel||'—')+'</td>';
     h+='<td class="col-wrap">'+esc(o.kontakt||'—')+'</td>';
-    h+='<td class="col-fix">'+esc(o.mobil||'—')+'</td>';
+    h+='<td class="col-fix">'+telHtml(o.mobil)+'</td>';
     h+='<td class="col-fix"><span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span></td>';
     h+='<td class="col-fix"><span class="chip-faktor">'+esc(o.faktor||'—')+'</span></td>';
     h+='<td class="col-termin">'+(o.termin?formatDatum(o.termin):(o.terminText?'<span style="color:var(--text3);font-style:italic">'+esc(o.terminText)+'</span>':'<span style="color:var(--text4);font-style:italic">bez dátumu</span>'))+'</td>';
@@ -1254,7 +1255,7 @@ window.otvorDetail=function(id){
   const o=[...objednavky,...historia].find(x=>x.id===id); if(!o) return;
   gi('det-title').textContent=(o.evCislo||'Objednávka')+' — '+esc(o.objednavatel||'');
   const terminDisp=o.termin?formatDatum(o.termin):(o.terminText?o.terminText:'<span style="color:var(--text4)">bez dátumu</span>');
-  const pols=[['Ev. číslo',esc(o.evCislo||'—')],['Stav','<span class="chip-stav '+stavClass(o.stav)+'">'+stavLabel(o.stav)+'</span>'],['Objednávateľ',esc(o.objednavatel||'—')],['IČO',esc(o.ico||'—')],['Kontaktná osoba',esc(o.kontakt||'—')],['Mobil',esc(o.mobil||'—')],['Email',esc(o.mail||'—')],['Zodpovedný','<span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span>'],['Faktor','<span class="chip-faktor">'+esc(o.faktor||'—')+'</span>'],['Termín',terminDisp],['Termín Do',o.terminDo?formatDatum(o.terminDo):(o.terminDoText?esc(o.terminDoText):'—')],['Čas',esc(o.cas||'—')],['Miesto merania — firma',esc(miestoFirma(o)||'—')],['IČO firmy',esc(o.firmaIco||'—')],['Adresa prevádzky',esc(miestoAdresa(o)||'—')],['Plánovaný rozsah / Poznámka',esc(o.poznamka||'—')],['Skutočný rozsah','<span style="color:#e53e3e">'+esc(o.rozsah||'—')+'</span>'],['Videli',(o.videli||[]).join(', ')||'—'],['Naposledy upravil',esc(o.lastEditBy||'—')]];
+  const pols=[['Ev. číslo',esc(o.evCislo||'—')],['Stav','<span class="chip-stav '+stavClass(o.stav)+'">'+stavLabel(o.stav)+'</span>'],['Objednávateľ',esc(o.objednavatel||'—')],['IČO',esc(o.ico||'—')],['Kontaktná osoba',esc(o.kontakt||'—')],['Mobil',telHtml(o.mobil)],['Email',mailHtml(o.mail)],['Zodpovedný','<span class="chip-os os-'+esc(o.osoba||'')+'">'+esc(o.osoba||'—')+'</span>'],['Faktor','<span class="chip-faktor">'+esc(o.faktor||'—')+'</span>'],['Termín',terminDisp],['Termín Do',o.terminDo?formatDatum(o.terminDo):(o.terminDoText?esc(o.terminDoText):'—')],['Čas',esc(o.cas||'—')],['Miesto merania — firma',esc(miestoFirma(o)||'—')],['IČO firmy',esc(o.firmaIco||'—')],['Adresa prevádzky',esc(miestoAdresa(o)||'—')],['Plánovaný rozsah / Poznámka',esc(o.poznamka||'—')],['Skutočný rozsah','<span style="color:#e53e3e">'+esc(o.rozsah||'—')+'</span>'],['Videli',(o.videli||[]).join(', ')||'—'],['Naposledy upravil',esc(o.lastEditBy||'—')]];
   let h='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px">';
   pols.forEach(([k,v])=>{ h+='<div style="padding:6px 0;border-bottom:1px solid var(--border3)"><div style="font-size:11px;color:var(--text3)">'+k+'</div><div>'+v+'</div></div>'; });
   h+='</div>';
@@ -1627,6 +1628,16 @@ window.vymazUlohu=async function(btn){
 function gi(id){ return document.getElementById(id); }
 function gv(id){ const e=gi(id); return e?e.value:''; }
 function sv(id,v){ const e=gi(id); if(e) e.value=v; }
+// Telefón a e-mail ako odkazy: ťuknutím sa volá / otvorí nový mail (klik neotvára detail riadku)
+function kontaktOdkazy(v,fn){
+  if(!v) return '—';
+  return v.split(/([,;\/]\s*)/).map(c=>{
+    const t=c.trim(); if(!t||/^[,;\/]$/.test(t)) return esc(c);
+    const h=fn(t); return h?'<a href="'+esc(h)+'" class="kontakt-odkaz" onclick="event.stopPropagation()">'+esc(c)+'</a>':esc(c);
+  }).join('');
+}
+function telHtml(v){ return kontaktOdkazy(v,t=>{ const n=t.replace(/[^\d+]/g,''); return n.length>=6?'tel:'+n:null; }); }
+function mailHtml(v){ return kontaktOdkazy(v,t=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t)?'mailto:'+t:null); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
